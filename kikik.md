@@ -194,3 +194,14 @@ changes, re-copy by hand.
 4. **Segment-aware grains** — grain source position keyed to hit features
    (centroid → which vowel), not just time. The voice answering the insect
    in kind.
+
+## Work log
+
+2026-07-31 — Codex — Investigated a report that pitch jitter did not work.
+Verified the control and planner with a 20-hit synthetic recording and a
+steady-tone grain source through the root server. At 0 st, all planned
+playback rates were 1.0; at ±12 st, rates ranged from 0.600 to 1.859. No
+production code changed. During preview, all grains are scheduled when
+playback starts, so pitch and jitter changes apply to the next preview or
+render, not the preview already playing. Left undone: decide whether grain
+controls should restart or reschedule an active preview.
