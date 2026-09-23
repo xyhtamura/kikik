@@ -142,7 +142,9 @@ changing one knob never re-randomizes the others' draws.
   - *walk* — a clamped random walk (step = pos jit): local coherence,
     global drift.
 - **envelope** — hann / expodec (attack-forward) / rev (swell); 129-point
-  gain curve per grain.
+  gain curve per grain. For expodec/rev, **attack** (ramp fraction) and
+  **decay** (falloff steepness) are exposed as knobs; hann is symmetric and
+  ignores them.
 - **gain** — master × (optionally) `0.25 + 0.75·s01^0.8`: the cicada's
   dynamics ride through to the voice.
 - **prob** thins the swarm; **spread** pans it, seeded per hit.

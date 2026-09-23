@@ -201,6 +201,8 @@ input[type=file]{display:none;}
           <button data-v="expodec">expodec</button>
           <button data-v="rexpodec">rev</button>
         </div></div>
+      <div class="row"><label>attack</label><input type="range" id="gatk" min="0.005" max="0.5" step="0.005" value="0.06"><span class="val" id="gatkV">6%</span></div>
+      <div class="row"><label>decay</label><input type="range" id="gdec" min="0.5" max="12" step="0.1" value="5"><span class="val" id="gdecV">5.0</span></div>
       <div class="row"><label>prob</label><input type="range" id="prob" min="0" max="1" step="0.01" value="1"><span class="val" id="probV">100%</span></div>
       <div class="row"><label>spread</label><input type="range" id="spread" min="0" max="1" step="0.01" value="0.6"><span class="val" id="spreadV">60%</span></div>
       <div class="row"><label>gain</label><input type="range" id="ggain" min="0" max="1.5" step="0.01" value="0.8"><span class="val" id="ggainV">0.80</span></div>
@@ -355,7 +357,7 @@ function planGrains(hits, G, sources, fieldDur){
     else { walkP=clamp(walkP+(rPos*2-1)*Math.max(0.005,G.posJit),0,1); posFrac=walkP; }
     const pos=posFrac*Math.max(0, src.buf.duration-len*rate);
     const g0=G.velGain? (0.25+0.75*Math.pow(h.s01, 0.8)) : 1;
-    grains.push({t:h.t, si, pos, posFrac, rate, len, gain:g0*G.gain, pan:(rPan*2-1)*G.spread, env:G.env});
+    grains.push({t:h.t, si, pos, posFrac, rate, len, gain:g0*G.gain, pan:(rPan*2-1)*G.spread, env:G.env, atk:G.atk, dec:G.dec});
   }
   return grains;
 }
@@ -399,12 +401,12 @@ function wavEncode(buf){
 }
 
 const ENV_N=129;
-function envCurve(shape, gain){
+function envCurve(shape, gain, atk=0.06, dec=5){
   const c=new Float32Array(ENV_N);
   for(let i=0;i<ENV_N;i++){ const f=i/(ENV_N-1); let v;
     if(shape==='hann') v=Math.pow(Math.sin(Math.PI*f),2);
-    else if(shape==='expodec') v=Math.min(f/0.06,1)*Math.exp(-5*f);
-    else v=Math.min((1-f)/0.06,1)*Math.exp(-5*(1-f));
+    else if(shape==='expodec') v=Math.min(f/atk,1)*Math.exp(-dec*f);
+    else v=Math.min((1-f)/atk,1)*Math.exp(-dec*(1-f));
     c[i]=v*gain; }
   c[0]=0; c[ENV_N-1]=0;
   return c;
@@ -415,7 +417,7 @@ function scheduleGrains(ctx, dest, grains, sources, t0){
     const src=ctx.createBufferSource(); src.buffer=sources[g.si].buf; src.playbackRate.value=g.rate;
     const gn=ctx.createGain();
     gn.gain.setValueAtTime(0, Math.max(0,t0+g.t-0.001));
-    gn.gain.setValueCurveAtTime(envCurve(g.env, g.gain), t0+g.t, g.len);
+    gn.gain.setValueCurveAtTime(envCurve(g.env, g.gain, g.atk, g.dec), t0+g.t, g.len);
     const pn=ctx.createStereoPanner? ctx.createStereoPanner() : null;
     if(pn){ pn.pan.value=g.pan; src.connect(gn); gn.connect(pn); pn.connect(dest); }
     else { src.connect(gn); gn.connect(dest); }
@@ -448,7 +450,7 @@ const state={
 const D={ hp:1200, smooth:0.002, thresh:2, floor:-50, gap:0.010 };
 const M={ pmode:'centroid', note:60, rlo:48, rhi:96, gamma:1, nlen:0.060 };
 const G={ len:0.080, lenJit:0.25, posMode:'random', posJit:0.10, semi:0, semiJit:0,
-          env:'hann', prob:1, spread:0.6, gain:0.8, velGain:true, pick:'random', seed:1 };
+          env:'hann', atk:0.06, dec:5, prob:1, spread:0.6, gain:0.8, velGain:true, pick:'random', seed:1 };
 const R={ dry:0, wet:1, tail:1 };
 const view={ pxPerSec:null, scrollX:0 };
 const GUT_T=24, PADB=14;
@@ -631,7 +633,12 @@ bindSeg('posmode',G,'posMode');
 bindRange('pjit',G,'posJit',v=>Math.round(v*100)+'%');
 bindRange('semi',G,'semi',v=>(v>0?'+':'')+v+'st');
 bindRange('sjit',G,'semiJit',v=>v.toFixed(1)+'st');
-bindSeg('gedge',G,'env');
+bindSeg('gedge',G,'env',()=>{ syncEnvKnobs(); replan(); });
+bindRange('gatk',G,'atk',v=>Math.round(v*100)+'%');
+bindRange('gdec',G,'dec',v=>v.toFixed(1));
+function syncEnvKnobs(){ const off=G.env==='hann';
+  for(const id of ['gatk','gdec']){ const el=q(id); el.disabled=off; el.closest('.row').style.opacity=off?.4:1; } }
+syncEnvKnobs();
 bindRange('prob',G,'prob',v=>Math.round(v*100)+'%');
 bindRange('spread',G,'spread',v=>Math.round(v*100)+'%');
 bindRange('ggain',G,'gain',v=>v.toFixed(2));
