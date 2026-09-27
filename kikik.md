@@ -207,3 +207,8 @@ production code changed. During preview, all grains are scheduled when
 playback starts, so pitch and jitter changes apply to the next preview or
 render, not the preview already playing. Left undone: decide whether grain
 controls should restart or reschedule an active preview.
+
+---
+
+2026-09-27 — Claude Code — Added `text/kikik_text.py`, a text version of the piece aimed at Navy Pen Issue V: NOISE (poetry, max 3 pages, due 2026-10-10). The script reads `F:/Eggs2/kikik/Cicada.swarm.mid` (22,639 hits, all on pitch 96, about 11 ms apart, 283 s). It divides time into character cells, and a cell prints a letter when its loudest hit clears a velocity threshold. The letter comes from a read head that sweeps the current line of `text/lyrics.txt`, with a seeded Gaussian jitter. Each lyric line gets an equal share of the MIDI's duration. CJK glyphs take two cells. `--norm global` uses one threshold, so after about 190 s, where velocity drops from about 76 to about 45, "it's 8 o'clock" prints two letters and "summer na naman" prints none. `--norm line` sets a threshold per line, so every line reads. Checked by rendering both modes at 48 rows × 60 columns (`text/out/`); both are deterministic under `--seed`.
+Undone: lines are not yet aligned to where 01–06.wav sit in `kikik.rpp` (48.5 s to 226 s), and it has not been confirmed that the MIDI's timeline matches the arrangement's. No PDF layout yet. Visual fragmentation of glyphs, the user's second idea, has not been started.
