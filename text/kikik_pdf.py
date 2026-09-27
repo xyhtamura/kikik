@@ -105,6 +105,9 @@ def cjk_subset(path, chars):
     return buf.getvalue()
 
 
+SERIF_JP_TTF = [None]  # the converted subset, kept for measuring
+
+
 def serif_css(archive, chars):
     """Register the serif faces in `archive` and return the @font-face CSS."""
     for name in SERIF.values():
@@ -113,7 +116,8 @@ def serif_css(archive, chars):
     css = (f"@font-face{{font-family:S;src:url({SERIF['regular']})}}"
            f"@font-face{{font-family:S;font-style:italic;src:url({SERIF['italic']})}}")
     if jp:
-        archive.add(cjk_subset(SERIF_JP, jp), "serif-jp.ttf")
+        SERIF_JP_TTF[0] = cjk_subset(SERIF_JP, jp)
+        archive.add(SERIF_JP_TTF[0], "serif-jp.ttf")
         css += "@font-face{font-family:J;src:url(serif-jp.ttf)}"
     # Noto Serif JP sits 0.25 em below Noto Serif's baseline in MuPDF's HTML
     # engine (measured from span origins in the rendered page); the shift
@@ -141,8 +145,19 @@ def mark_jp(text):
     return "".join(out)
 
 
-def note_html(note):
-    """Paragraphs, plus the translation block as a two-column table."""
+NOTE_PT = 10.5
+GUTTER_PT = 24
+
+
+def text_width(t, latin, jp):
+    return sum((jp if is_wide(c) else latin).text_length(c, fontsize=NOTE_PT) for c in t)
+
+
+def note_html(note, measure, latin, jp):
+    """Paragraphs, plus the translation block as a two-column table.
+
+    MuPDF ignores `margin: auto` on tables, so the table is centred by
+    measuring its columns with the same fonts and setting the left margin."""
     parts = []
     for block in [b.strip() for b in note.split("\n\n") if b.strip()]:
         lines = block.split("\n")
@@ -152,7 +167,11 @@ def note_html(note):
                 orig, _, trans = l.partition(DASH)
                 rows.append(f"<tr><td class=o>{mark_jp(orig.strip())}</td>"
                             f"<td>{mark_jp(trans.strip())}</td></tr>")
-            parts.append("<table>" + "".join(rows) + "</table>")
+            pairs = [l.partition(DASH)[::2] for l in lines]
+            width = (max(text_width(o.strip(), latin, jp) for o, _ in pairs) + GUTTER_PT
+                     + max(text_width(t.strip(), latin, jp) for _, t in pairs))
+            left = max(0.0, (measure - width) / 2)
+            parts.append(f'<table style="margin-left:{left:.1f}pt">' + "".join(rows) + "</table>")
         else:
             parts.append(f"<p>{mark_jp(' '.join(lines))}</p>")
     return "".join(parts)
@@ -207,11 +226,13 @@ def render(text, width, out, size, title, author, note=None):
         page2 = doc.new_page(width=PAGE.width, height=PAGE.height)
         box = pymupdf.Rect(MARGIN, MARGIN, PAGE.width - MARGIN, PAGE.height - MARGIN)
         spare, _ = page2.insert_htmlbox(
-            box, note_html(note), archive=archive, scale_low=1,
-            css=css + "p{font-size:10.5pt;line-height:1.5;margin:0 0 9pt 0}"
-                      "table{margin:6pt 0 15pt 0;border-collapse:collapse}"
-                      "td{font-size:10.5pt;line-height:1.5;padding:0 0 2pt 0;vertical-align:top}"
-                      "td.o{padding-right:24pt}")
+            box, note_html(note, box.width, pymupdf.Font(fontfile=str(FONTS / SERIF["regular"])),
+                          pymupdf.Font(fontbuffer=SERIF_JP_TTF[0]) if SERIF_JP_TTF[0] else None),
+            archive=archive, scale_low=1,
+            css=css + f"p{{font-size:{NOTE_PT}pt;line-height:1.5;margin:0 0 9pt 0}}"
+                      "table{margin-top:6pt;margin-bottom:15pt;border-collapse:collapse}"
+                      f"td{{font-size:{NOTE_PT}pt;line-height:1.5;padding:0 0 2pt 0;vertical-align:top;white-space:nowrap}}"
+                      f"td.o{{padding-right:{GUTTER_PT}pt}}")
         if spare < 0:
             sys.exit("the note overflows page 2; shorten NOTE.md or reduce the note font size")
         layout["note_spare_pt"] = round(spare)
