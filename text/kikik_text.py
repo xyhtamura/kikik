@@ -4,7 +4,10 @@ The text version of kíkik. Each character cell is one slice of time. A slice
 whose loudest hit clears the threshold prints a letter; the rest print a space.
 The letter comes from a read head that moves through the current lyric line
 over that line's share of the recording, with a seeded jitter around the head,
-so a line is sprayed from left to right rather than spelled.
+so a line is sprayed from left to right rather than spelled. Time is split
+evenly between lines. Every letter of a line is guaranteed to appear: a letter
+the jitter never picked takes over the printed cell nearest its own place in
+the sweep.
 
 Usage:
     python text/kikik_text.py F:/Eggs2/kikik/Cicada.swarm.mid
@@ -16,8 +19,9 @@ Parameters that change the result:
     --width    characters per row
     --density  fraction of cells that print, measured over the whole piece,
                so a quieter passage prints fewer letters than a loud one
-    --norm     global: one threshold for the piece (quiet sections thin out)
-               line: a threshold per lyric line (every line reads at --density)
+    --norm     line (default): a threshold per lyric line, so every line
+               reads at --density
+               global: one threshold for the piece (quiet sections thin out)
     --jitter   spread of the read head, in characters (Gaussian sigma)
     --seed     same seed, same text
 """
@@ -49,7 +53,29 @@ def is_wide(ch):
     return unicodedata.east_asian_width(ch) in ("W", "F")
 
 
-def build(hits, lines, width, rows, density, jitter, seed, norm="global"):
+def force_missing(cells, starts, letters, cells_per_line, line):
+    """Place each letter that never printed at the nearest printed cell of the
+    same width, so the row layout does not shift."""
+    placed = set()
+    for p, ch in enumerate(letters):
+        if ch in cells:
+            continue
+        target = (p + 0.5) / len(letters) * cells_per_line
+        pool = [
+            k for k, c in enumerate(cells)
+            if c != " " and k not in placed and is_wide(c) == is_wide(ch)
+            and cells.count(c) > 1  # never remove another letter's last copy
+        ]
+        if not pool:
+            print(f"warning: could not place {ch!r} in {line!r}: fewer printed cells "
+                  "than letters; raise --density or --rows", file=sys.stderr)
+            continue
+        k = min(pool, key=lambda k: abs(starts[k] - target))
+        cells[k] = ch
+        placed.add(k)
+
+
+def build(hits, lines, width, rows, density, jitter, seed, norm="line"):
     end = hits[-1][0]
     rows_per_line = max(1, rows // len(lines))
     cells_per_line = rows_per_line * width
@@ -76,7 +102,7 @@ def build(hits, lines, width, rows, density, jitter, seed, norm="global"):
     stanzas = []
     for li, line in enumerate(lines):
         letters = [c for c in line if not c.isspace()]
-        cells = []
+        cells, starts = [], []
         base = li * cells_per_line
         threshold = thresholds[li]
         j = 0
@@ -84,6 +110,7 @@ def build(hits, lines, width, rows, density, jitter, seed, norm="global"):
             ci = base + j
             if peak[ci] < threshold:
                 cells.append(" ")
+                starts.append(j)
                 j += 1
                 continue
             rng = random.Random(f"{seed}:{ci}")  # keyed per cell, like hitSeed
@@ -94,13 +121,17 @@ def build(hits, lines, width, rows, density, jitter, seed, norm="global"):
             if is_wide(ch):
                 if col == width - 1:  # no room for a double-width glyph
                     cells.append(" ")
+                    starts.append(j)
                     j += 1
                     continue
                 cells.append(ch)
+                starts.append(j)
                 j += 2
             else:
                 cells.append(ch)
+                starts.append(j)
                 j += 1
+        force_missing(cells, starts, letters, cells_per_line, line)
         # Re-flow into rows by display width.
         out, row, w = [], "", 0
         for ch in cells:
@@ -132,7 +163,7 @@ def main(argv=None):
     ap.add_argument("--rows", type=int, default=120)
     ap.add_argument("--density", type=float, default=0.35)
     ap.add_argument("--jitter", type=float, default=1.5)
-    ap.add_argument("--norm", choices=["global", "line"], default="global")
+    ap.add_argument("--norm", choices=["global", "line"], default="line")
     ap.add_argument("--seed", default="1")
     ap.add_argument("-o", "--out")
     a = ap.parse_args(argv)
