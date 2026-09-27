@@ -1,10 +1,12 @@
 kíkik: note
 
-I recorded cicadas, Platypleura fulvigera, outside a house near Diliman in 2016. I knew while recording that the sound belonged to that house and that year. A cicada chorus is specific to its trees, its season, and its hour of day, so a recording of one holds a place at a particular time. Diliman is one of the few green areas in Metro Manila, which is built densely enough that green space is scarce. Where I live now, I do not hear cicadas in the same way.
+In Hiligaynon, "kíkik" means cicada. 
 
-I am Filipino-Japanese. I have moved often between two countries and between two sides of my family, and I have also been kept in one place when I did not want to stay. Both taught me that the sound around a place is part of what makes it that place, and that it changes when you leave and when you come back. The poem switches between Ilonggo, Japanese, and English along that back-and-forth. It can also be read as the speech of someone who stayed while the place changed around them.
+I recorded cicadas outside my former home here in the Philippines in 2016. I guess I was just collecting field recordings to use in music, but it was also a recording of that particular place and time. A cicada chorus is specific to its trees and time of day. Diliman, where I recorded it, is one of the few green areas in Metro Manila, which is built densely enough that green space has become scarce. I no longer live in that house now, and I hear other noises, and sometimes other insects.
 
-The text on the page is made from the recording. A detector found 22,639 separate chirps in 4 minutes 43 seconds of it. The page is a grid in which each character cell stands for about a tenth of a second. A cell prints a letter when a chirp inside it is loud enough, and otherwise stays blank. The letter comes from whichever line of the poem is sounding at that moment, so each line spreads across its share of time and overlaps the lines next to it. Every letter of every line appears on the page, though rarely in order. In the sound version of kíkik the same chirps trigger fragments of my recorded voice, and here they trigger letters.
+I am Filipino/Ilonggo-Japanese. I have moved often and also been unable to move when I wanted to many times in my life. I have experiences both as the one transferring, and the one being left behind. I think, even when I wanted to leave a place, I'd catch myself in the middle of my thought and feeling, and think, this moment, this place, will never be again exactly what it is right now. The noise around a place is part of what makes it that place, and it changes when you leave and when you come back. Cicadas in both Filipino and Japanese cultures act as clocks.
+
+The text on the page is made from the cicada recording. I wrote a poem first in Hiligaynon, Japanese, and English, and mapped their characters to the chirps of the cicada recording computationally through granular synthesis. My detector found 22,639 separate chirps in 4 minutes 43 seconds of the recording. The poem is a kind of grid in which each character cell or space stands for about a tenth of a second. A character is printed on a cell when it detects a chirp. The character comes from whichever line of the poem is being scanned at the moment, and it samples a span of characters in a rolling window, resulting characters being smeared and swarm-like across the text. 
 
 alas ocho na — it is eight o'clock
 夏です — it is summer
@@ -12,3 +14,5 @@ dandansoy, bayaan ta ikaw — Dandansoy, I will leave you
 1年 — one year
 it's 8 o'clock
 summer na naman — it is summer again
+
+The third line quotes “Dandansoy,” a traditional Ilonggo folk song about leaving. This piece also has an audio counterpart. 
