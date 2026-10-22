@@ -1,0 +1,68 @@
+kíkik
+
+     a                      s alaaalaalas     a  a a     aa
+    a  lallaal   a   a    s      sla s     a asaa  a ll  o
+              l  a l a aaalaosa la  al    a s            s c
+     ss l h s a h oo      oaa   s ol a     s o   a sa  ss  o
+ s       o nc  o  c  o  s hc a o  o  o    h  o   ohh  a  s
+  oac h o a  s      s  ochos h o  c  cos ha           oc   h
+so         hh  o  夏  ocで  a     h c c  s    n     o oo夏 h
+   夏  h        hhoh    o a 夏    ooh夏 c  夏a 夏      夏
+   o  夏a oで        n夏nすn夏 o   夏  す   で夏   夏 h夏n
+ a  す          で  で 夏  夏す夏夏夏夏o   夏   夏    す夏
+       す  aで    夏で す   すす  夏    で     です   すす
+  夏夏 夏   す  で        夏 夏  夏夏すで       す 夏夏 す
+夏 夏 す すす す で        す  夏夏   夏 す     で  す  す
+  夏  す す  すす です す夏 す   夏  す です     で でで
+す   夏 dでです        dで す す  で夏     n 夏  n     す 夏
+ n すす 夏す     nす    adn す       で   夏    す す夏す
+n aす d         n    sn   でn    a夏す すnsす    s s  aa  夏
+d oo夏         sすa          s    n on o  os す da     o
+ n     ob   n os syo  y       y, ybao , oy yo     nab  b  ,
+ ba   b   a  bo       , by   a   y   yy baya b   y y  ay b
+ b      ab,yayy aa             a  n  a  ,yyaa      a  b   n
+  bay ay    aa   a a   aa         a   aaaaa    a y y  a    y
+ya a   a  ay 1a     t a   a k   n  at     年   11   nt 年  1
+ 1年  a     an  i      a1    年   1  ka       11 1  1   1年
+   i  i1t   年 1 1     1 11  11   1 i     1  1年  年1 1
+a11     1 年    1      w    1  年1  1 1     1 年a1   年1a年w
+ 1    年w年   w    年    1    1年   1 1   1 11  年1 1年
+  1 年  11 1  1年 年1  年 11年   1  年年      年年年1   1
+    11      11  年    1年1 1年 年  年1    年 1 年年
+  年1 年 年 1  年  1   年  年 年    1   1年年年1  1    年
+ 1 年     1  1 年   i  年年年年     年       年       年
+  i  1 1年1  年  1 1   1年年 年 年’年             1s  ’i 1
+    1 1’i  tt  s s                              8     ’  s
+ 年 c ’ 年s’         ’              s s 8s  s  8’81   1’  o
+ 8  oo  ’s oo o ss o’  c8s  8                      soo8 ’o
+               o l c’s  8o’o o’ s  s 8 ’   8o   ’      o ’ 8
+       l       o  o  ’’   o 8oc’’  o o’  8’  o’ cl’      ’
+  o o ’c’ o     l  ccc       c cco   l c    c c c  lo  ulo k
+             o       ’  8 ’cc  skcl umc ’osmko’ s   s    l
+    oo cel   l o  l r       c                              o
+  l cc  so sr e nlo m oe      kmk            lmr mck kr a  k
+    em u       m m    r  nm ac  m r   rr         rm       mn
+  errrennrermmk        n         er nn rm        e  m r  n n
+ rr  n      an       n    n a aa    a     n  a na  aa n
+a   an n n  rrnm    a naa          aan   n       a aa  n  n
+ ar n naa  am a aanmn         m    n               aama  aaa
+a    n    amaa  a aan a   a    a  amam  a           a a   a
+a  a     n   m   na   nn    nn an      na aa   n   nn a n  n
+
+
+In Hiligaynon, “kíkik” means cicada.
+
+I recorded cicadas outside my former home here in the Philippines in 2016. I guess I was just collecting field recordings to use in music, but it was also a recording of that particular place and time. A cicada chorus is specific to its trees and time of day. Diliman, where I recorded it, is one of the few green areas in Metro Manila, which is built densely enough that green space has become scarce. I no longer live in that house now, and I hear other noises, and sometimes other insects.
+
+I am Filipino/Ilonggo-Japanese. I have moved often and also been unable to move when I wanted to many times in my life. I have experiences both as the one transferring, and the one being left behind. I think, even when I wanted to leave a place, I’d catch myself in the middle of my thought and feeling, and think, this moment, this place, will never be again exactly what it is right now. The noise around a place is part of what makes it that place, and it changes when you leave and when you come back. Cicadas in both Filipino and Japanese cultures act as clocks.
+
+The text on the page is made from the cicada recording. I wrote a poem first in Hiligaynon, Japanese, and English, and mapped their characters to the chirps of the cicada recording computationally through granular synthesis. My detector found 22,639 separate chirps in 4 minutes 43 seconds of the recording. The poem is a kind of grid in which each character cell or space stands for about a tenth of a second. A character is printed on a cell when it detects a chirp. The character comes from whichever line of the poem is being scanned at the moment, and it samples a span of characters in a rolling window, resulting characters being smeared and swarm-like across the text.
+
+alas ocho na — it is eight o’clock
+夏です — it is summer
+dandansoy, bayaan ta ikaw — Dandansoy, I will leave you
+1年 — one year
+it’s 8 o’clock
+summer na naman — it is summer again
+
+The third line quotes “Dandansoy,” a traditional Ilonggo folk song about leaving. This piece also has an audio counterpart.
